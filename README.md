@@ -60,7 +60,7 @@ The full form of an ARM is an advanced reduced instruction set computer (RISC) m
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2025 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -72,9 +72,15 @@ The full form of an ARM is an advanced reduced instruction set computer (RISC) m
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include"stdio.h"
-#include"stdbool.h"
-bool pb;
+#include<stdbool.h>
+void Push_button();
+bool button_status;
+
+
+
+
+
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -148,25 +154,24 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  pb = HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13);
-	  if(pb==0)
-	  {
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
-		  HAL_Delay(300);
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-		  HAL_Delay(300);
-	  }
-	  else
-	  {
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
-	  }
-    /* USER CODE END WHILE */
+	  Push_button();
 
-    /* USER CODE BEGIN 3 */
   }
+  /* USER CODE END 3 */
 }
+void Push_button()
+{
+	button_status=HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13);
+	if(button_status==0)
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
 
-
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+	}
+}
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -178,13 +183,13 @@ void SystemClock_Config(void)
 
   /** Configure the main internal regulator output voltage
   */
-  HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSIDiv = RCC_HSI_DIV1;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -194,10 +199,11 @@ void SystemClock_Config(void)
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1;
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
   {
@@ -224,7 +230,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : PC13 */
   GPIO_InitStruct.Pin = GPIO_PIN_13;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA5 */
@@ -274,18 +280,15 @@ void assert_failed(uint8_t *file, uint32_t line)
 ```
 
 
-
 ## Output  :
- LED IS ON
+ ![Screenshot 2025-03-18 055830](https://github.com/user-attachments/assets/9473df40-1053-4a59-ae08-71f9d764ff35)
+![Screenshot 2025-03-18 055857](https://github.com/user-attachments/assets/16236fb4-1fda-4321-aa2b-d1393a93dd2d)
 
- ![led is on](https://github.com/dharmaraj-007/EXPERIMENT--02-INTEFACING-A-DIGITAL-INPUT-TO-ARM-DEVELOPMENT-BOARD/assets/119560386/43b83034-af0d-4b25-b91d-ae4f30fc3efb)
+## layout of the circuit 
 
-LED IS OFF
+![image](https://github.com/user-attachments/assets/6af21843-0c1e-458b-91a1-59dd68c2ed4a)
 
-![led is off](https://github.com/dharmaraj-007/EXPERIMENT--02-INTEFACING-A-DIGITAL-INPUT-TO-ARM-DEVELOPMENT-BOARD/assets/119560386/4d2a054c-e586-488d-9aad-bd8ab49033f4)
 
- 
- 
  
 ## Result :
 Interfacing a digital Input (Pushbutton ) with ARM microcontroller based IOT development is executed and the results are verified.
